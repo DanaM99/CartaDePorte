@@ -1,0 +1,195 @@
+:root {
+  --bg: #f5f7fa;
+  --bg-card: #ffffff;
+  --text: #1f2937;
+  --text-light: #6b7280;
+  --primary: #15814b;
+  --primary-hover: #0d6431;
+  --danger: #dc2626;
+  --radius: 10px;
+  --shadow: 0 4px 20px rgb(0 0 0 / 7%);
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* NAVBAR */
+.navbar {
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.navbar h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+  padding: 20px;
+}
+
+/* TARJETAS */
+.card {
+  background: var(--bg-card);
+  padding: 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* FORMULARIO */
+.row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.col {
+  flex: 1;
+}
+
+label {
+  font-size: 14px;
+  color: var(--text-light);
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: var(--radius);
+  border: 1px solid #ccc;
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+input:focus, select:focus {
+  outline: 2px solid var(--primary);
+}
+
+/* BOTONES */
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-edit {
+  background: #fbbf24;
+  color: black;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+/* TABLA */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.table th {
+  background: var(--primary);
+  color: white;
+  padding: 12px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* RESPONSIVE */
+@media (max-width: 850px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .table, .table thead, .table tbody, .table th, .table td, .table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .table tr {
+    margin-bottom: 15px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 10px;
+  }
+
+  .table td {
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+  }
+
+  .table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--text-light);
+  }
+
+  .table th {
+    display: none;
+  }
+}

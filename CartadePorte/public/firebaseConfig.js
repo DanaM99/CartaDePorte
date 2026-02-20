@@ -1,5 +1,6 @@
 // Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 // Firebase config
 export const firebaseConfig = {
@@ -12,5 +13,6 @@ export const firebaseConfig = {
   measurementId: "G-JZQQGN8D0X"
 };
 
-// Inicializamos Firebase y exportamos la app
+// Inicializamos Firebase y exportamos la app + Firestore
 export const app = initializeApp(firebaseConfig);
+export const db = getFirestore(app);

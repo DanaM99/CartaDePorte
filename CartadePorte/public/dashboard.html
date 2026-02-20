@@ -1,22 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CartaDePorte - Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Carta de Porte – Panel</title>
+  <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
-<script type="module">
-    import { auth } from "./js/auth.js";
-    import { onAuthStateChanged } 
-        from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            window.location.href = "login.html";
-        }
+  <!-- NAVBAR SUPERIOR -->
+  <header class="navbar">
+    <div class="logo">Carta de Porte</div>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="dashboard.html" class="active">Inicio</a>
+      <a href="view.html">Registros</a>
+      <a href="estadisticas.html">Estadísticas</a>
+      <a href="filtros.html">Filtros</a>
+    </nav>
+
+    <div class="user-info">
+      <img id="userPhoto" class="user-photo" alt="Usuario" />
+      <span id="userName"></span>
+      <button id="logoutBtn" class="btn-logout">Salir</button>
+    </div>
+
+    <!-- Botón hamburguesa -->
+    <button class="hamburger" id="hamburgerBtn">☰</button>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main class="main">
+    <div class="card">
+      <h3>Bienvenido al Panel</h3>
+      <p>Seleccioná una opción del menú para comenzar.</p>
+    </div>
+  </main>
+
+  <!-- Firebase -->
+  <script type="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./auth.js"></script>
+
+  <!-- UI -->
+  <script type="module" src="../js/ui.js"></script>
+
+  <script>
+    // Toggle menú hamburguesa
+    const hamburgerBtn = document.getElementById("hamburgerBtn");
+    const navLinks = document.getElementById("navLinks");
+
+    hamburgerBtn.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
     });
-</script>
-
+  </script>
 </body>
 </html>

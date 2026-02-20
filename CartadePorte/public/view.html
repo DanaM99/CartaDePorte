@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Cartas de Porte</title>
+  <link rel="stylesheet" href="view.css" />
+</head>
+
+<body>
+
+  <!-- NAV SUPERIOR -->
+  <nav class="navbar">
+    <h2>Carta de Porte – Registros</h2>
+    <div class="nav-user">
+      <span id="userName"></span>
+      <button id="logoutBtn" class="btn btn-danger">Salir</button>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- FORMULARIO -->
+    <section class="card">
+      <h3>Registrar Nueva Carga</h3>
+
+      <form id="cartaForm">
+
+        <div class="row">
+          <div class="col">
+            <label>Fecha</label>
+            <input type="date" id="fecha" required />
+          </div>
+
+          <div class="col">
+            <label>Tipo de Cereal</label>
+            <select id="cereal" required>
+              <option value="">Seleccionar</option>
+              <option>Soja</option>
+              <option>Maíz</option>
+              <option>Trigo</option>
+              <option>Cebada</option>
+              <option>Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label>CTG</label>
+            <input type="number" id="ctg" placeholder="123456789" required />
+          </div>
+
+          <div class="col">
+            <label>Kilos</label>
+            <input type="number" id="kg" required />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label>Tarifa ($)</label>
+            <input type="number" id="tarifa" step="0.01" required />
+          </div>
+
+          <div class="col">
+            <label>% Comisión</label>
+            <input type="number" id="porcentaje" step="0.01" required />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full">Guardar Registro</button>
+      </form>
+    </section>
+
+    <!-- TABLA CRUD -->
+    <section class="card">
+      <h3>Historial de Registros</h3>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cereal</th>
+            <th>CTG</th>
+            <th>KG</th>
+            <th>Tarifa</th>
+            <th>%</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+
+    </section>
+
+  </main>
+
+  <!-- Firebase -->
+  <script type="module" src="./firebaseConfig.js"></script>
+  <script type="module" src="./auth.js"></script>
+
+  <!-- CRUD + UI -->
+  <script type="module" src="../js/utils.js"></script>
+  <script type="module" src="../js/ui.js"></script>
+  <script type="module" src="../js/crud.js"></script>
+
+</body>
+</html>
