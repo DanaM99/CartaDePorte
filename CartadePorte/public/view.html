@@ -14,41 +14,37 @@
 
   <header class="navbar">
     <div class="logo">Carta de Porte</div>
-
     <nav class="nav-links" id="navLinks">
       <a href="dashboard.html">Inicio</a>
       <a href="view.html" class="active">Registros</a>
       <a href="estadisticas.html">Estadísticas</a>
       <a href="filtros.html">Filtros</a>
     </nav>
-
     <div class="user-info">
       <img id="userPhoto" class="user-photo" alt="Usuario" />
       <span id="userName"></span>
       <button id="logoutBtn" class="btn-logout">Salir</button>
     </div>
-
     <button class="hamburger" id="hamburgerBtn">☰</button>
   </header>
 
   <main class="main">
     <div class="container">
-
+      
       <section class="card">
         <h3>Registrar Nueva Carga</h3>
-        <p style="color: #666; margin-bottom: 20px;">Completá los datos de la planilla para calcular el total bruto y neto.</p>
+        <p style="color: #666; margin-bottom: 20px;">Ingresá los datos para calcular comisión y neto.</p>
 
         <form id="cartaForm">
           <div class="row">
             <div class="col">
-              <label for="fecha">Fecha de Carga</label>
+              <label>Fecha</label>
               <input type="date" id="fecha" required />
             </div>
-
             <div class="col">
-              <label for="cereal">Tipo de Cereal</label>
+              <label>Cereal</label>
               <select id="cereal" required>
-                <option value="">-- Seleccioná el grano --</option>
+                <option value="">-- Seleccionar --</option>
                 <option>Soja</option>
                 <option>Maíz</option>
                 <option>Trigo</option>
@@ -60,46 +56,42 @@
 
           <div class="row">
             <div class="col">
-              <label for="ctg">Número de CTG</label>
-              <input type="number" id="ctg" placeholder="Ej: 123456789012" required />
-              <small>Ingresá los 12 números del comprobante.</small>
+              <label>Número de CTG</label>
+              <input type="number" id="ctg" placeholder="12 dígitos" required />
             </div>
-
             <div class="col">
-              <label for="kg">Kilos Netos</label>
-              <input type="number" id="kg" placeholder="Ej: 30500" required />
+              <label>Kilos Netos</label>
+              <input type="number" id="kg" placeholder="Ej: 30000" required />
             </div>
           </div>
 
           <div class="row">
             <div class="col">
-              <label for="tarifa">Tarifa acordada ($)</label>
-              <input type="number" id="tarifa" step="0.01" placeholder="Valor por Tn o KM" required />
+              <label>Tarifa ($)</label>
+              <input type="number" id="tarifa" step="0.01" placeholder="Precio pactado" required />
             </div>
-
             <div class="col">
-              <label for="porcentaje">% Comisión</label>
-              <input type="number" id="porcentaje" step="0.01" placeholder="Ej: 2.0" required />
+              <label>% Comisión</label>
+              <input type="number" id="porcentaje" step="0.01" placeholder="Ej: 2.5" required />
             </div>
           </div>
 
           <div class="row">
             <div class="col">
-              <label for="pidioAdelanto">¿Se solicitó adelanto?</label>
+              <label>¿Adelanto?</label>
               <select id="pidioAdelanto">
-                <option value="no">No se entregó dinero</option>
-                <option value="si">Sí, se entregó adelanto</option>
+                <option value="no">No</option>
+                <option value="si">Sí</option>
               </select>
             </div>
-
             <div class="col" id="contenedorMontoAdelanto" style="display: none;">
-              <label for="montoAdelanto">Monto del Adelanto ($)</label>
+              <label>Monto ($)</label>
               <input type="number" id="montoAdelanto" step="0.01" value="0" />
             </div>
           </div>
 
           <button type="submit" class="btn-primary" style="width: 100%; padding: 15px; margin-top: 20px;">
-            Guardar y Calcular Registro
+            Guardar Registro
           </button>
         </form>
       </section>
@@ -107,9 +99,8 @@
       <section class="card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
           <h3>Historial de Registros</h3>
-          <button id="btnMostrarRegistros" class="btn-secondary">Mostrar Registros Anteriores</button>
+          <button id="btnMostrarRegistros" class="btn-secondary">Mostrar Registros</button>
         </div>
-
         <div id="contenedorTabla" style="display: none; margin-top: 20px; overflow-x: auto;">
           <table class="table">
             <thead>
@@ -119,8 +110,8 @@
                 <th>CTG</th>
                 <th>Kilos</th>
                 <th>Tarifa</th>
-                <th>Bruto</th>
-                <th>Comisión</th>
+                <th>Comisión ($)</th>
+                <th>%</th>
                 <th>Adelanto</th>
                 <th>Neto Final</th>
                 <th>Acciones</th>
@@ -134,30 +125,33 @@
   </main>
 
   <div id="editModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6);">
-    <div class="card" style="max-width: 500px; margin: 8% auto; position: relative; padding: 30px;">
-      <h3 style="margin-top: 0;">Editar Registro</h3>
-      <hr>
+    <div class="card" style="max-width: 600px; margin: 5% auto; padding: 25px;">
+      <h3>Editar Registro</h3>
       <form id="editForm">
         <input type="hidden" id="editId">
-        <div class="row" style="margin-top: 15px;">
+        <div class="row">
+          <div class="col"><label>Fecha</label><input type="date" id="editFecha" required></div>
           <div class="col">
-            <label>Nueva Tarifa ($)</label>
-            <input type="number" id="editTarifa" step="0.01" required>
-          </div>
-          <div class="col">
-            <label>Nuevo % Comisión</label>
-            <input type="number" id="editPorcentaje" step="0.01" required>
+            <label>Cereal</label>
+            <select id="editCereal">
+              <option>Soja</option><option>Maíz</option><option>Trigo</option><option>Cebada</option><option>Girasol</option>
+            </select>
           </div>
         </div>
         <div class="row">
-          <div class="col">
-            <label>Ajustar Adelanto ($)</label>
-            <input type="number" id="editAdelanto" step="0.01" required>
-          </div>
+          <div class="col"><label>CTG</label><input type="number" id="editCtg" required></div>
+          <div class="col"><label>Kilos</label><input type="number" id="editKg" required></div>
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 25px;">
-          <button type="submit" class="btn-primary" style="flex: 2;">Guardar Cambios</button>
-          <button type="button" id="closeModalBtn" class="btn-secondary" style="flex: 1;">Cancelar</button>
+        <div class="row">
+          <div class="col"><label>Tarifa ($)</label><input type="number" id="editTarifa" step="0.01" required></div>
+          <div class="col"><label>% Com.</label><input type="number" id="editPorcentaje" step="0.01" required></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Adelanto ($)</label><input type="number" id="editAdelanto" step="0.01" required></div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" class="btn-primary" style="flex: 1;">Guardar Cambios</button>
+          <button type="button" onclick="closeEditModal()" class="btn-secondary">Cancelar</button>
         </div>
       </form>
     </div>
@@ -168,32 +162,15 @@
   <script type="module" src="../js/crud.js"></script>
 
   <script>
-    // Toggle menú hamburguesa
-    const hamburgerBtn = document.getElementById("hamburgerBtn");
-    const navLinks = document.getElementById("navLinks");
-    hamburgerBtn.addEventListener("click", () => {
-      navLinks.classList.toggle("show");
-    });
-
-    // Lógica para el campo de adelanto
     const pidioAdelanto = document.getElementById("pidioAdelanto");
     const contenedorMonto = document.getElementById("contenedorMontoAdelanto");
-    
     pidioAdelanto.addEventListener("change", () => {
       contenedorMonto.style.display = pidioAdelanto.value === "si" ? "flex" : "none";
     });
-
-    // Mostrar tabla
     document.getElementById("btnMostrarRegistros").addEventListener("click", () => {
       document.getElementById("contenedorTabla").style.display = "block";
     });
-
-    // Función cerrar modal (disponible globalmente para el botón cancelar)
-    window.closeEditModal = () => {
-      document.getElementById("editModal").style.display = "none";
-    };
-
-    document.getElementById("closeModalBtn").addEventListener("click", closeEditModal);
+    window.closeEditModal = () => document.getElementById("editModal").style.display = "none";
   </script>
 </body>
 </html>
