@@ -2,59 +2,68 @@ import { app } from "./firebaseConfig.js";
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-// Inicializar Auth
 export const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// BOTÓN LOGIN
-const loginBtn = document.getElementById("googleLoginBtn");
-if (loginBtn) {
-  loginBtn.addEventListener("click", () => {
-    signInWithRedirect(auth, provider);
-  });
-}
-
-// Procesar login después del redirect
-getRedirectResult(auth)
-  .then((result) => {
-    if (result && result.user) {
-      console.log("Usuario logueado:", result.user);
-      window.location.href = "./dashboard.html"; // ✅ ruta relativa
-    }
-  })
-  .catch((error) => {
-    console.error("Error login Google:", error);
-  });
-
-// 🔑 Verificar si ya hay sesión activa
+// --- ESTADO DE LA SESIÓN ---
 onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("Sesión activa:", user);
+  const isLoginPage = window.location.pathname.endsWith("login.html") || window.location.pathname.endsWith("/");
 
-    // Mostrar nombre en dashboard
-    const userNameSpan = document.getElementById("userName");
-    if (userNameSpan) {
-      userNameSpan.textContent = user.displayName;
+  if (user) {
+    console.log("Sesión activa de:", user.displayName);
+    
+    // Si estamos en login, vamos al dashboard
+    if (isLoginPage) {
+      window.location.href = "./dashboard.html";
     }
 
-    // Redirigir si está en login.html
-    if (window.location.pathname.endsWith("login.html")) {
-      window.location.href = "./dashboard.html";
+    // Actualizar UI del Dashboard
+    const userNameSpan = document.getElementById("userName");
+    const userPhotoImg = document.getElementById("userPhoto");
+    if (userNameSpan) userNameSpan.textContent = user.displayName;
+    if (userPhotoImg) userPhotoImg.src = user.photoURL;
+
+  } else {
+    // Si NO hay usuario y NO estamos en login, proteger la ruta
+    if (!isLoginPage) {
+      console.warn("Usuario no autenticado. Redirigiendo a login...");
+      window.location.href = "./login.html";
     }
   }
 });
 
-// BOTÓN LOGOUT
+// --- ACCIÓN DE LOGIN ---
+const loginBtn = document.getElementById("googleLoginBtn");
+if (loginBtn) {
+  loginBtn.addEventListener("click", async () => {
+    try {
+      console.log("Iniciando Login...");
+      const result = await signInWithPopup(auth, provider);
+      console.log("Login exitoso:", result.user.displayName);
+      
+      // Redirección manual inmediata tras el éxito del popup
+      window.location.href = "./dashboard.html";
+    } catch (error) {
+      console.error("Error en Login:", error.code, error.message);
+      alert("Error al ingresar: " + error.message);
+    }
+  });
+}
+
+// --- ACCIÓN DE LOGOUT ---
 const logoutBtn = document.getElementById("logoutBtn");
 if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "./login.html"; // ✅ ruta relativa
+    try {
+      await signOut(auth);
+      window.location.href = "./login.html";
+    } catch (error) {
+      console.error("Error al salir:", error);
+    }
   });
 }

@@ -1,18 +1,33 @@
-// Manejar la carga de vistas dinámicas
+// ui.js
 const main = document.getElementById("mainContent");
-const menuItems = document.querySelectorAll(".sidebar li");
+const navLinks = document.querySelectorAll(".nav-links a");
 
-// Cargar vista inicial
-loadView("view.html");
+async function loadView(view) {
+    try {
+        // Asumiendo que ui.js se llama desde dashboard.html en la raíz de /public
+        const response = await fetch(`./${view}`); 
+        const html = await response.text();
+        main.innerHTML = html;
 
-// Listener de menú
-menuItems.forEach(item => {
-    item.addEventListener("click", () => {
-        const view = item.getAttribute("data-view");
+        // Lógica de inicialización según la vista
+        if (view.includes("view.html")) {
+            const crud = await import("./crud.js");
+            // crud.init(); // Si exportas una función de inicio
+        }
+    } catch (err) {
+        main.innerHTML = "<p>Error al cargar la vista.</p>";
+        console.error("Error al cargar vista:", err);
+    }
+}
+
+// Listener para los links del navbar
+navLinks.forEach(link => {
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+        const view = e.target.getAttribute("href");
         loadView(view);
     });
 });
-
 // Función para cargar cualquier vista HTML dentro del dashboard
 async function loadView(view) {
     try {
