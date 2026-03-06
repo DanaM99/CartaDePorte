@@ -5,143 +5,185 @@ import {
   getDocs,
   deleteDoc,
   updateDoc,
-  doc
+  getDoc,
+  doc,
+  query,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const form = document.getElementById("cartaForm");
 const tableBody = document.getElementById("tableBody");
+const editModal = document.getElementById("editModal");
+const editForm = document.getElementById("editForm");
 
 const ref = collection(db, "cartas");
 
 // ------------------------
-// CREATE
+// CREATE (CON SWEETALERT Y FÓRMULA CORREGIDA)
 // ------------------------
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   try {
-    const fecha = document.getElementById("fecha").value;
-    const cereal = document.getElementById("cereal").value;
-    const ctg = document.getElementById("ctg").value;
     const kg = parseFloat(document.getElementById("kg").value);
     const tarifa = parseFloat(document.getElementById("tarifa").value);
     const porcentaje = parseFloat(document.getElementById("porcentaje").value);
+    const adelantoMonto = document.getElementById("pidioAdelanto").value === "si" 
+                          ? parseFloat(document.getElementById("montoAdelanto").value) 
+                          : 0;
 
-    // Total bruto y neto
-    const bruto = tarifa * kg;
-    const comision = bruto * (porcentaje / 100);
-    const total = bruto - comision;
+    // FÓRMULA SEGÚN TU INDICACIÓN: (KG * Tarifa) * %
+    const subtotal = kg * tarifa;
+    const totalComision = subtotal * (porcentaje / 100);
+    const netoFinal = totalComision - adelantoMonto;
 
     await addDoc(ref, {
-      fecha,
-      cereal,
-      ctg,
+      fecha: document.getElementById("fecha").value,
+      cereal: document.getElementById("cereal").value,
+      ctg: document.getElementById("ctg").value,
       kg,
       tarifa,
       porcentaje,
-      bruto,
-      comision,
-      total
+      brutoOperacion: subtotal, // KG * Tarifa
+      totalGanancia: totalComision, // (KG * Tarifa) * %
+      adelantoMonto,
+      netoACobrar: netoFinal
+    });
+
+    // ÉXITO: SweetAlert
+    Swal.fire({
+      icon: 'success',
+      title: 'Registro Guardado',
+      text: 'La carta de porte se cargó con éxito',
+      confirmButtonColor: '#3085d6'
     });
 
     form.reset();
+    document.getElementById("contenedorMontoAdelanto").style.display = "none";
     loadTable();
+
   } catch (err) {
-    console.error("Error al guardar registro:", err);
-    alert("Hubo un error al guardar el registro.");
+    console.error(err);
+    Swal.fire('Error', 'No se pudo guardar: ' + err.message, 'error');
   }
 });
 
 // ------------------------
-// READ
+// READ (PUNTO 2: VER REGISTROS PREVIOS)
 // ------------------------
 async function loadTable() {
-  tableBody.innerHTML = "";
+  if (!tableBody) return;
+  tableBody.innerHTML = "<tr><td colspan='10'>Cargando registros...</td></tr>";
 
   try {
-    const snapshot = await getDocs(ref);
+    // Ordenamos por fecha para ver los más recientes arriba
+    const q = query(ref, orderBy("fecha", "desc"));
+    const snapshot = await getDocs(q);
+    tableBody.innerHTML = "";
 
     snapshot.forEach((docu) => {
       const data = docu.data();
-
       const row = document.createElement("tr");
-
       row.innerHTML = `
-        <td data-label="Fecha">${data.fecha}</td>
-        <td data-label="Cereal">${data.cereal}</td>
-        <td data-label="CTG">${data.ctg}</td>
-        <td data-label="KG">${data.kg}</td>
-        <td data-label="Tarifa">$${data.tarifa}</td>
-        <td data-label="%">${data.porcentaje}%</td>
-        <td data-label="Total">$${data.total.toFixed(2)}</td>
-        <td data-label="Acciones">
-          <button class="btn btn-edit" onclick="edit('${docu.id}')">Editar</button>
-          <button class="btn btn-delete" onclick="remove('${docu.id}')">Eliminar</button>
+        <td>${data.fecha}</td>
+        <td>${data.cereal}</td>
+        <td>${data.ctg}</td>
+        <td>${data.kg}</td>
+        <td>$${data.tarifa}</td>
+        <td>$${data.totalGanancia.toFixed(2)}</td>
+        <td>${data.porcentaje}%</td>
+        <td>$${data.adelantoMonto}</td>
+        <td><strong>$${data.netoACobrar.toFixed(2)}</strong></td>
+        <td>
+          <button class="btn-edit" onclick="openEditModal('${docu.id}')">✏️</button>
+          <button class="btn-delete" onclick="remove('${docu.id}')">🗑️</button>
         </td>
       `;
-
       tableBody.appendChild(row);
     });
   } catch (err) {
-    console.error("Error al cargar registros:", err);
-    tableBody.innerHTML = "<tr><td colspan='8'>Error al cargar registros.</td></tr>";
+    console.error(err);
+    tableBody.innerHTML = "<tr><td colspan='10'>Error al cargar datos. Revisa la consola.</td></tr>";
   }
 }
 
 // ------------------------
-// DELETE
+// EDITAR (PUNTO 3: MOSTRAR TODOS LOS CAMPOS)
 // ------------------------
-window.remove = async (id) => {
+window.openEditModal = async (id) => {
   try {
-    await deleteDoc(doc(db, "cartas", id));
-    loadTable();
+    const docSnap = await getDoc(doc(db, "cartas", id));
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      
+      // Cargamos TODOS los campos en el modal (asegúrate de que los IDs existan en el HTML)
+      document.getElementById("editId").value = id;
+      document.getElementById("editTarifa").value = data.tarifa;
+      document.getElementById("editPorcentaje").value = data.porcentaje;
+      document.getElementById("editAdelanto").value = data.adelantoMonto;
+      
+      // Mostramos el modal
+      editModal.style.display = "block";
+    }
   } catch (err) {
-    console.error("Error al eliminar registro:", err);
-    alert("No se pudo eliminar el registro.");
+    Swal.fire('Error', 'No se pudo abrir el editor', 'error');
   }
 };
 
-// ------------------------
-// UPDATE
-// ------------------------
-window.edit = async (id) => {
+editForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const id = document.getElementById("editId").value;
+
   try {
-    const newTarifa = parseFloat(prompt("Nueva tarifa:"));
-    const newPorcentaje = parseFloat(prompt("Nuevo %:"));
+    const newTarifa = parseFloat(document.getElementById("editTarifa").value);
+    const newPorcentaje = parseFloat(document.getElementById("editPorcentaje").value);
+    const newAdelanto = parseFloat(document.getElementById("editAdelanto").value);
 
-    if (isNaN(newTarifa) || isNaN(newPorcentaje)) {
-      alert("Valores inválidos.");
-      return;
-    }
+    const docSnap = await getDoc(doc(db, "cartas", id));
+    const kg = docSnap.data().kg;
 
-    const docRef = doc(db, "cartas", id);
-    const snapshot = await getDocs(ref);
+    // Recalculamos con la fórmula corregida
+    const subtotal = kg * newTarifa;
+    const totalComision = subtotal * (newPorcentaje / 100);
+    const netoFinal = totalComision - newAdelanto;
 
-    let kg = 0;
-    snapshot.forEach((d) => {
-      if (d.id === id) {
-        kg = d.data().kg;
-      }
-    });
-
-    const bruto = newTarifa * kg;
-    const comision = bruto * (newPorcentaje / 100);
-    const total = bruto - comision;
-
-    await updateDoc(docRef, {
+    await updateDoc(doc(db, "cartas", id), {
       tarifa: newTarifa,
       porcentaje: newPorcentaje,
-      bruto,
-      comision,
-      total
+      adelantoMonto: newAdelanto,
+      brutoOperacion: subtotal,
+      totalGanancia: totalComision,
+      netoACobrar: netoFinal
     });
 
+    Swal.fire('Actualizado', 'Los cambios se guardaron correctamente', 'success');
+    window.closeEditModal();
     loadTable();
   } catch (err) {
-    console.error("Error al actualizar registro:", err);
-    alert("No se pudo actualizar el registro.");
+    Swal.fire('Error', 'No se pudo actualizar', 'error');
+  }
+});
+
+// ------------------------
+// ELIMINAR
+// ------------------------
+window.remove = async (id) => {
+  const result = await Swal.fire({
+    title: '¿Eliminar registro?',
+    text: "Esta acción no se puede deshacer",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, borrar'
+  });
+
+  if (result.isConfirmed) {
+    await deleteDoc(doc(db, "cartas", id));
+    loadTable();
+    Swal.fire('Borrado', 'El registro ha sido eliminado.', 'success');
   }
 };
 
-// Inicializar tabla
+// Carga inicial
 loadTable();
