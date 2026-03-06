@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - Carta de Porte</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="view.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">Carta de Porte</div>
+        <nav class="nav-links" id="navLinks">
+            <a href="dashboard.html">Inicio</a>
+            <a href="view.html">Registros</a>
+            <a href="estadisticas.html" class="active">Estadísticas</a>
+            <a href="filtros.html">Filtros</a>
+        </nav>
+        <div class="user-info">
+            <img id="userPhoto" class="user-photo" alt="Usuario" />
+            <span id="userName"></span>
+            <button id="logoutBtn" class="btn-logout">Salir</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h3>Resumen General</h3>
+            <div class="row">
+                <div class="card" style="flex: 1; background: #ecfdf5; border: 1px solid #10b981;">
+                    <small>Comisiones Totales</small>
+                    <h2 id="totalGanancia">$0</h2>
+                </div>
+                <div class="card" style="flex: 1; background: #eff6ff; border: 1px solid #3b82f6;">
+                    <small>Viajes Realizados</small>
+                    <h2 id="totalViajes">0</h2>
+                </div>
+            </div>
+        </section>
+        <section class="card">
+            <h3>Resumen Financiero</h3>
+            <div class="row">
+                <div class="card" style="flex: 1; background: #ecfdf5; border: 1px solid #10b981;">
+                    <small>Comisiones Brutas</small>
+                    <h2 id="totalGanancia" style="color: #065f46;">$0</h2>
+                </div>
+                <div class="card" style="flex: 1; background: #fff7ed; border: 1px solid #f97316;">
+                    <small>Total Adelantos</small>
+                    <h2 id="totalAdelantos" style="color: #9a3412;">$0</h2>
+                </div>
+                <div class="card" style="flex: 1; background: #f0f9ff; border: 1px solid #0ea5e9;">
+                    <small>Neto Real a Cobrar</small>
+                    <h2 id="totalNeto" style="color: #075985;">$0</h2>
+                </div>
+            </div>
+        </section>
+
+        <div class="row">
+            <div class="col card">
+                <h3>Comparativa: Bruto vs. Neto</h3>
+                <canvas id="chartComparativa"></canvas>
+                <p style="font-size: 0.8rem; color: #666; margin-top: 10px;">
+                    Muestra cuánto de la comisión queda efectiva tras descontar los adelantos.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col card">
+                <h3>Viajes por Mes</h3>
+                <canvas id="chartMeses"></canvas>
+            </div>
+            <div class="col card">
+                <h3>Distribución por Cereal</h3>
+                <canvas id="chartCereales"></canvas>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col card">
+                <h3>Tarifa Promedio por Grano</h3>
+                <canvas id="chartTarifas"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="./firebaseConfig.js"></script>
+    <script type="module" src="./auth.js"></script>
+    <script type="module" src="../js/stats.js"></script>
+</body>
+
+</html>
