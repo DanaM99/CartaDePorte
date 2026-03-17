@@ -17,16 +17,21 @@ async function loadTable() {
     snapshot.forEach((docu) => {
       const d = docu.data();
       const row = document.createElement("tr");
+      
+      // Formateo de números para que se vean bien en la tabla
+      const totalComision = d.totalGanancia || 0;
+      const netoFinal = d.netoACobrar || 0;
+
       row.innerHTML = `
         <td data-label="Fecha">${d.fecha}</td>
-        <td data-label="Cereal">${d.cereal}</td>
+        <td data-label="Grano">${d.cereal}</td>
         <td data-label="CTG">${d.ctg}</td>
         <td data-label="Kilos">${d.kg.toLocaleString()}</td>
-        <td data-label="Tarifa">$${d.tarifa}</td>
-        <td data-label="Comisión">$${d.totalGanancia.toFixed(2)}</td>
-        <td data-label="Porcentaje">${d.porcentaje}%</td>
-        <td data-label="Adelanto">$${d.adelantoMonto}</td>
-        <td data-label="Neto Final"><strong>$${d.netoACobrar.toFixed(2)}</strong></td>
+        <td data-label="Tarifa">$${d.tarifa.toLocaleString()}</td>
+        <td data-label="% Comisión">${d.porcentaje}%</td>
+        <td data-label="Total Comisión">$${totalComision.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+        <td data-label="Adelanto">$${d.adelantoMonto.toLocaleString()}</td>
+        <td data-label="Neto Final"><strong>$${netoFinal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
         <td>
           <button class="btn-edit" onclick="openEditModal('${docu.id}')">✏️</button>
           <button class="btn-delete" onclick="remove('${docu.id}')">🗑️</button>
@@ -34,7 +39,7 @@ async function loadTable() {
       `;
       tableBody.appendChild(row);
     });
-  } catch (e) { console.error(e); }
+  } catch (e) { console.error("Error al cargar tabla:", e); }
 }
 
 // --- GUARDAR (CREATE) ---
@@ -46,16 +51,16 @@ form.addEventListener("submit", async (e) => {
     const porc = parseFloat(document.getElementById("porcentaje").value);
     const adelanto = document.getElementById("pidioAdelanto").value === "si" ? parseFloat(document.getElementById("montoAdelanto").value) : 0;
 
-    // FÓRMULA: (KG * TARIFA) * %
-    const comision = (kg * tarifa) * (porc / 100);
-    const neto = comision - adelanto;
+    // NUEVA FÓRMULA: ((Kg * Tarifa * %) / 1000) - Adelanto
+    const comisionTotal = (kg * tarifa * (porc / 100)) / 1000;
+    const neto = comisionTotal - adelanto;
 
     await addDoc(ref, {
       fecha: document.getElementById("fecha").value,
       cereal: document.getElementById("cereal").value,
       ctg: document.getElementById("ctg").value,
       kg, tarifa, porcentaje: porc,
-      totalGanancia: comision,
+      totalGanancia: comisionTotal, // Esto es el "Total Comisión"
       adelantoMonto: adelanto,
       netoACobrar: neto
     });
@@ -94,15 +99,16 @@ editForm.addEventListener("submit", async (e) => {
     const porc = parseFloat(document.getElementById("editPorcentaje").value);
     const adelanto = parseFloat(document.getElementById("editAdelanto").value);
 
-    const comision = (kg * tarifa) * (porc / 100);
-    const neto = comision - adelanto;
+    // RECALCULAR CON NUEVA FÓRMULA
+    const comisionTotal = (kg * tarifa * (porc / 100)) / 1000;
+    const neto = comisionTotal - adelanto;
 
     await updateDoc(doc(db, "cartas", id), {
       fecha: document.getElementById("editFecha").value,
       cereal: document.getElementById("editCereal").value,
       ctg: document.getElementById("editCtg").value,
       kg, tarifa, porcentaje: porc,
-      totalGanancia: comision,
+      totalGanancia: comisionTotal,
       adelantoMonto: adelanto,
       netoACobrar: neto
     });
@@ -115,11 +121,18 @@ editForm.addEventListener("submit", async (e) => {
 
 // --- ELIMINAR ---
 window.remove = async (id) => {
-  const res = await Swal.fire({ title: '¿Borrar?', icon: 'warning', showCancelButton: true });
+  const res = await Swal.fire({ 
+    title: '¿Borrar registro?', 
+    text: "Esta acción no se puede deshacer",
+    icon: 'warning', 
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
   if (res.isConfirmed) {
     await deleteDoc(doc(db, "cartas", id));
     loadTable();
-    Swal.fire("Eliminado", "", "success");
+    Swal.fire("Eliminado", "El registro ha sido borrado", "success");
   }
 };
 

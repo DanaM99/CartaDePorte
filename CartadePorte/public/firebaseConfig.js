@@ -1,8 +1,7 @@
-// Import Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
-// Firebase config
 export const firebaseConfig = {
   apiKey: "AIzaSyCb8ofrkQHnm5nA-CK9XMKGkseN3P4rIM4",
   authDomain: "cartadeporte-c13e1.firebaseapp.com",
@@ -13,6 +12,7 @@ export const firebaseConfig = {
   measurementId: "G-JZQQGN8D0X"
 };
 
-// Inicializamos Firebase y exportamos la app + Firestore
+// Inicializamos
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app); // Ahora auth se exporta desde aquí

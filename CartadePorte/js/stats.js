@@ -42,10 +42,15 @@ async function inicializarEstadisticas() {
     });
 
     // --- ACTUALIZAR PANTALLA (KPIs) ---
-    document.getElementById("totalGanancia").innerText = `$${brutoTotal.toLocaleString('es-AR')}`;
-    document.getElementById("totalAdelantos").innerText = `$${adelantosTotal.toLocaleString('es-AR')}`;
-    document.getElementById("totalNeto").innerText = `$${netoTotal.toLocaleString('es-AR')}`;
+    const format = (num) => `$${num.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    
+    // Inyectar en IDs únicos
+    document.getElementById("totalNetoPrincipal").innerText = format(netoTotal);
     document.getElementById("totalViajes").innerText = datos.length;
+    
+    document.getElementById("totalGananciaBruta").innerText = format(brutoTotal);
+    document.getElementById("totalAdelantos").innerText = format(adelantosTotal);
+    document.getElementById("totalNetoSecundario").innerText = format(netoTotal);
 
     const mesesOrdenados = Object.keys(statsMesBruto).sort();
 
@@ -71,7 +76,12 @@ async function inicializarEstadisticas() {
                 }
             ]
         },
-        options: { responsive: true }
+        options: { 
+            responsive: true,
+            scales: {
+                y: { ticks: { callback: (val) => '$' + val.toLocaleString() } }
+            }
+        }
     });
 
     // 2. Gráfico de Viajes por Mes
@@ -87,7 +97,7 @@ async function inicializarEstadisticas() {
         }
     });
 
-    // 3. Gráfico de Cereales (Dona)
+    // 3. Gráfico de Cereales
     new Chart(document.getElementById('chartCereales'), {
         type: 'doughnut',
         data: {
@@ -99,7 +109,7 @@ async function inicializarEstadisticas() {
         }
     });
 
-    // 4. Gráfico de Tarifas Promedio
+    // 4. Tarifas Promedio
     const promediosTarifa = Object.keys(tarifasPorCereal).map(c => {
         const sum = tarifasPorCereal[c].reduce((a, b) => a + b, 0);
         return (sum / tarifasPorCereal[c].length).toFixed(2);

@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Carta de Porte – Panel</title>
+  <title>Carta de Porte – Inicio</title>
   <link rel="stylesheet" href="dashboard.css">
 </head>
-
 <body>
 
-  <!-- NAVBAR SUPERIOR -->
   <header class="navbar">
+    <button class="menu-toggle" id="menuToggle">☰</button>
     <div class="logo">Carta de Porte</div>
 
     <nav class="nav-links" id="navLinks">
@@ -22,39 +20,49 @@
     </nav>
 
     <div class="user-info">
-      <img id="userPhoto" class="user-photo" alt="Usuario" />
+      <button id="theme-toggle" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🌙</button>
+      <img id="userPhoto" class="user-photo" src="" alt="">
       <span id="userName"></span>
-      <button id="logoutBtn" class="btn-logout">Salir</button>
+      <button id="logoutBtn" style="background:#e63946; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">Salir</button>
     </div>
-
-    <!-- Botón hamburguesa -->
-    <button class="hamburger" id="hamburgerBtn">☰</button>
   </header>
 
-  <!-- CONTENIDO -->
-  <main class="main" id="mainContent">
-
-    <div class="card">
-      <h3>Bienvenido al Panel</h3>
-      <p>Seleccioná una opción del menú para comenzar.</p>
+  <main class="container" style="padding: 20px; max-width: 1000px; margin: auto;">
+    <h1>Panel de Control</h1>
+    <div class="grid-menu">
+      <a href="view.html" class="btn-menu">
+        <span>📝</span><br>Registros
+      </a>
+      <a href="estadisticas.html" class="btn-menu">
+        <span>📊</span><br>Estadísticas
+      </a>
+      <a href="filtros.html" class="btn-menu">
+        <span>🔍</span><br>Filtros
+      </a>
     </div>
   </main>
 
-  <!-- Firebase -->
   <script type="module" src="./firebaseConfig.js"></script>
   <script type="module" src="./auth.js"></script>
-
-  <!-- UI -->
-  <script type="module" src="../js/ui.js"></script>
-
+  
   <script>
-    // Toggle menú hamburguesa
-    const hamburgerBtn = document.getElementById("hamburgerBtn");
-    const navLinks = document.getElementById("navLinks");
+    // Lógica Hamburguesa
+    const menuToggle = document.getElementById('menuToggle');
+    const navLinks = document.getElementById('navLinks');
+    menuToggle.onclick = () => navLinks.classList.toggle('active');
 
-    hamburgerBtn.addEventListener("click", () => {
-      navLinks.classList.toggle("show");
-    });
+    // Lógica Modo Oscuro
+    const themeBtn = document.getElementById('theme-toggle');
+    const setTheme = (theme) => {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      themeBtn.innerText = theme === 'dark' ? '☀️' : '🌙';
+    };
+    themeBtn.onclick = () => {
+      const isDark = localStorage.getItem('theme') === 'dark';
+      setTheme(isDark ? 'light' : 'dark');
+    };
+    setTheme(localStorage.getItem('theme') || 'light');
   </script>
 </body>
 </html>

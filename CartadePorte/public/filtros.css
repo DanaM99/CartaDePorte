@@ -1,0 +1,137 @@
+/* Contenedor Principal */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* GRILLA DE FILTROS - Control de ancho en PC */
+.grid-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 25px;
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    align-items: end; /* Alinea etiquetas e inputs a la base */
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.col label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary); /* Verde para identificar rápido el campo */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+input, select {
+    height: 45px; /* Altura fija para uniformidad */
+    padding: 0 15px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text-main);
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* BOTONERA */
+.actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 25px;
+    padding: 0 10px;
+}
+
+.btn {
+    flex: 1; /* En móvil ocupan el mismo ancho */
+    min-width: 150px;
+    height: 48px;
+    font-weight: 700;
+}
+
+/* TABLA RESPONSIVA MEJORADA */
+.table-responsive {
+    margin-top: 30px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    background: var(--bg);
+    color: var(--text-muted);
+    padding: 15px;
+    text-align: left;
+    font-size: 0.8rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+}
+
+/* DISEÑO PARA CELULAR (VISTA TARJETA) */
+@media (max-width: 768px) {
+    .grid-filters {
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .table thead { display: none; } /* Escondemos cabecera */
+
+    .table tr {
+        display: block;
+        padding: 15px;
+        border-bottom: 8px solid var(--bg); /* Separador grueso entre registros */
+    }
+
+    .table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        text-align: right;
+    }
+
+    .table td:last-child { border-bottom: none; }
+
+    /* Estilo para los títulos a la izquierda en móvil */
+    .table td::before {
+        content: attr(data-label);
+        font-weight: 800;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        margin-right: 15px;
+        text-align: left;
+    }
+
+    /* Resaltado del Neto Final en móvil */
+    .table td[data-label="Neto Final"] {
+        background: var(--bg);
+        margin: 5px -15px;
+        padding: 12px 15px;
+        color: var(--primary);
+        font-weight: bold;
+    }
+}

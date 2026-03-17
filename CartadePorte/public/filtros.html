@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtros Avanzados - Carta de Porte</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="filtros.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+    <header class="navbar">
+        <button class="menu-toggle" id="menuToggle">☰</button>
+        <div class="logo">Carta de Porte</div>
+
+        <nav class="nav-links" id="navLinks">
+            <a href="dashboard.html">Inicio</a>
+            <a href="view.html">Registros</a>
+            <a href="estadisticas.html">Estadísticas</a>
+            <a href="filtros.html" class="active">Filtros</a>
+        </nav>
+
+        <div class="user-info">
+            <button id="theme-toggle" style="background:none; border:none; cursor:pointer; font-size:1.2rem;">🌙</button>
+            <img id="userPhoto" class="user-photo" src="" alt="Perfil">
+            <span id="userName"></span>
+            <button id="logoutBtn" class="btn-danger">Salir</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h3>Buscador y Filtros Avanzados</h3>
+            <div class="grid-filters">
+                <div class="col">
+                    <label>Número de CTG</label>
+                    <input type="text" id="filterCtg" placeholder="Ej: 1234...">
+                </div>
+
+                <div class="col">
+                    <label>Tipo de Grano</label>
+                    <select id="filterGrano">
+                        <option value="">Todos los granos</option>
+                        <option>Soja</option>
+                        <option>Maíz</option>
+                        <option>Trigo</option>
+                        <option>Cebada</option>
+                        <option>Girasol</option>
+                        <option>Otro</option>
+                    </select>
+                </div>
+
+                <div class="col">
+                    <label>Mes Específico</label>
+                    <input type="month" id="filterMes">
+                </div>
+
+                <div class="col">
+                    <label>Estado de Adelanto</label>
+                    <select id="filterAdelanto">
+                        <option value="todos">Todos los viajes</option>
+                        <option value="con">Con Adelanto</option>
+                        <option value="sin">Sin Adelanto</option>
+                    </select>
+                </div>
+
+                <div class="col date-range">
+                    <label>Rango de Fechas</label>
+                    <div class="date-inputs">
+                        <input type="date" id="fechaInicio">
+                        <input type="date" id="fechaFin">
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-row">
+                <button id="btnFiltrar" class="btn btn-primary">🔍 Aplicar Filtros</button>
+                <button id="btnLimpiar" class="btn btn-secondary">🧹 Limpiar</button>
+                <button id="btnExcel" class="btn btn-success">📊 Exportar Excel</button>
+                <button id="btnWhatsapp" class="btn-whatsapp">💬 WhatsApp</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Grano</th>
+                            <th>CTG</th>
+                            <th>Kilos</th>
+                            <th>Tarifa</th>
+                            <th>Neto Final</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBodyFiltros"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="./firebaseConfig.js"></script>
+    <script type="module" src="./auth.js"></script>
+    <script type="module" src="../js/filtros.js"></script>
+
+    <script>
+        // Lógica Menú Hamburguesa
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        menuToggle.onclick = () => navLinks.classList.toggle('active');
+
+        // Lógica Modo Oscuro
+        const themeBtn = document.getElementById('theme-toggle');
+        const setTheme = (theme) => {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeBtn.innerText = theme === 'dark' ? '☀️' : '🌙';
+        };
+        themeBtn.onclick = () => {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            setTheme(isDark ? 'light' : 'dark');
+        };
+        setTheme(localStorage.getItem('theme') || 'light');
+    </script>
+</body>
+
+</html>

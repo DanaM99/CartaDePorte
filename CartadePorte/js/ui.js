@@ -65,3 +65,27 @@ onAuthStateChanged(auth, (user) => {
     }
   }
 });
+// Lógica de Modo Oscuro
+const themeToggle = document.getElementById('theme-toggle');
+const currentTheme = localStorage.getItem('theme') || 'light';
+
+// Aplicar al cargar
+document.documentElement.setAttribute('data-theme', currentTheme);
+themeToggle.innerText = currentTheme === 'dark' ? '☀️' : '🌙';
+
+themeToggle.addEventListener('click', () => {
+    let theme = document.documentElement.getAttribute('data-theme');
+    let newTheme = theme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeToggle.innerText = newTheme === 'dark' ? '☀️' : '🌙';
+});
+
+// Resaltar link activo automáticamente
+const activePage = window.location.pathname;
+document.querySelectorAll('.nav-links a').forEach(link => {
+  if(link.href.includes(`${activePage}`)){
+    link.classList.add('active');
+  }
+});
