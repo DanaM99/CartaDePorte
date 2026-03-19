@@ -1,4 +1,4 @@
-import { db } from "../firebaseConfig.js";
+import { db } from "../public/firebaseConfig";
 import { collection, addDoc, getDocs, deleteDoc, updateDoc, getDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 const form = document.getElementById("cartaForm");
