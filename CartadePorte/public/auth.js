@@ -10,18 +10,27 @@ const provider = new GoogleAuthProvider();
 
 // --- ESTADO DE LA SESIÓN ---
 onAuthStateChanged(auth, (user) => {
-  const isLoginPage = window.location.pathname.endsWith("login.html") || window.location.pathname.endsWith("/");
+  // Con el rewrite de Vercel, el index.html en /public es la raíz "/"
+  const path = window.location.pathname;
+  const isLoginPage = path === "/" || path.endsWith("index.html") || path === "";
 
   if (user) {
-    if (isLoginPage) window.location.href = "./dashboard.html";
+    // Si está logueado y entra al inicio, mandarlo al dashboard
+    if (isLoginPage) {
+      window.location.href = "dashboard.html";
+    }
 
-    // Actualizar UI
+    // Actualizar UI (Navbar)
     const userNameSpan = document.getElementById("userName");
     const userPhotoImg = document.getElementById("userPhoto");
     if (userNameSpan) userNameSpan.textContent = user.displayName;
     if (userPhotoImg) userPhotoImg.src = user.photoURL;
+    
   } else {
-    if (!isLoginPage) window.location.href = "./login.html";
+    // Si NO está logueado y NO está en el login, mandarlo al inicio (index.html)
+    if (!isLoginPage) {
+      window.location.href = "index.html";
+    }
   }
 });
 
@@ -31,8 +40,10 @@ if (loginBtn) {
   loginBtn.addEventListener("click", async () => {
     try {
       await signInWithPopup(auth, provider);
-      window.location.href = "./dashboard.html";
+      // Al estar en el mismo nivel (public), la ruta es directa
+      window.location.href = "dashboard.html";
     } catch (error) {
+      console.error("Error en Login:", error);
       alert("Error al ingresar: " + error.message);
     }
   });
@@ -44,7 +55,7 @@ if (logoutBtn) {
   logoutBtn.addEventListener("click", async () => {
     try {
       await signOut(auth);
-      window.location.href = "./login.html";
+      window.location.href = "index.html";
     } catch (error) {
       console.error("Error al salir:", error);
     }

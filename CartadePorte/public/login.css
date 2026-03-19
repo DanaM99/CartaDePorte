@@ -1,58 +1,89 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Arial", sans-serif;
-}
+/* login.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 body {
-    background: #f2f2f2;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f7f5; /* El mismo fondo que el dashboard */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-}
-
-.login-container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
+    color: #2c3e50;
 }
 
 .login-card {
-    background: #fff;
-    padding: 35px 30px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e7e1;
     text-align: center;
+    max-width: 380px;
+    width: 90%;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .login-card h1 {
+    color: #4a7c59; /* Verde Sabio */
     margin-bottom: 10px;
-    font-size: 28px;
-    color: #333;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
 .login-card p {
-    margin-bottom: 25px;
-    color: #666;
+    color: #6a7c70;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+    line-height: 1.4;
 }
 
 .google-btn {
-  background: white;
-  border: 2px solid #4285F4;
-  color: #4285F4;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-  max-width: 300px;
-  margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    background: #ffffff;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .google-btn:hover {
-  background: #4285F4;
-  color: white;
+    background: #f8f9fa;
+    border-color: #4a7c59;
+    box-shadow: 0 4px 12px rgba(74, 124, 89, 0.15);
 }
 
+.google-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.footer-text {
+    margin-top: 30px;
+    font-size: 0.75rem;
+    color: #a0afb1;
+}
+
+/* Responsivo para Celular */
+@media (max-width: 480px) {
+    .login-card {
+        padding: 30px 20px;
+    }
+    .login-card h1 {
+        font-size: 1.75rem;
+    }
+}
